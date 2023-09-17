@@ -4,6 +4,16 @@ import { Appointment } from '../../appointment.model';
 @Injectable()
 export class GetAppointmentService {
 
+  async getPetAppointments(id): Promise<any> {
+    const appointments = await Appointment.findAll({
+      where: { petClientId: id }
+    })
+    if (!appointments.length) {
+      throw new HttpException("No appointments", 404);
+    }
+    return appointments
+  }
+
   async getAppointment(queryParams?): Promise<any> {
     const { name, startDate, endDate } = queryParams;
     const whereClause = {};
@@ -16,7 +26,7 @@ export class GetAppointmentService {
     })
 
     if (!existAppointments.length) {
-      throw new HttpException("pet not found", 404);
+      throw new HttpException("appointment not found", 404);
     }
     return existAppointments;
   }
