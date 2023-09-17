@@ -39,7 +39,6 @@ export class GetAppointmentController {
         try {
             const response = await this.appService.getPetAppointments(id);
             res.status(HttpStatus.OK).send(response)
-            console.log(response);
         } catch (error) {
             console.log(error);
             res.status(HttpStatus.NOT_FOUND).send(error);
