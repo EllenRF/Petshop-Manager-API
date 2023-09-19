@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { Appointment } from '../../appointment.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GetAppointmentService {
@@ -15,11 +16,20 @@ export class GetAppointmentService {
   }
 
   async getAppointment(queryParams?): Promise<any> {
-    const { name, startDate, endDate } = queryParams;
+    const { startDate } = queryParams;
     const whereClause = {};
     startDate ? (whereClause['startDate'] = startDate) : null;
-    endDate ? (whereClause['endDate'] = endDate) : null;
-    name ? (whereClause['name'] = name) : null;
+    
+    if (startDate) {
+      const startDateDate = new Date(startDate);
+  
+      const startDateRange = {
+        [Op.gte]: startDateDate,
+        [Op.lt]: new Date(startDateDate.getTime() + 24 * 60 * 60 * 1000),
+      };
+  
+      whereClause['startDate'] = startDateRange;
+    }
 
     const existAppointments = await Appointment.findAll({
       where: whereClause
